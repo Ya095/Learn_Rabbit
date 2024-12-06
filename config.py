@@ -25,9 +25,15 @@ def get_connection() -> pika.BlockingConnection:
     return pika.BlockingConnection()
 
 
-def configure_logging(level: int = logging.INFO):
+def configure_logging(
+    level: int = logging.INFO,
+    pika_log_level: int = logging.WARNING,
+):
     logging.basicConfig(
         level=level,
         datefmt="%Y-%m-%d %H:%M:%S",
         format="[%(asctime)s] %(module)s %(levelname)s: %(message)s",
     )
+
+    # изменение конфига логера модуля pika
+    logging.getLogger("pika").setLevel(pika_log_level)

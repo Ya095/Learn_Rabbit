@@ -1,3 +1,4 @@
+from random import random
 from typing import TYPE_CHECKING
 import logging
 
@@ -23,11 +24,22 @@ def process_new_message(
 ):
 
     log.warning("[ ] Start processing message (expensive task!) %r", body)
-    ch.basic_ack(delivery_tag=method.delivery_tag)
-    log.warning(
-        "[X] Finished processing message %r",
-        body,
-    )
+    if random() > 0.7:
+        # отклоняем обработку сообщений по каким либо параметрам
+        # ch.basic_nack(delivery_tag=method.delivery_tag)
+
+        # Не возвращаем сообщения обратно в очередь
+        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+        log.info(
+            "--- Could not processing message (no requeue) %r",
+            body,
+        )
+    else:
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+        log.info(
+            "+++ Finished processing message %r",
+            body,
+        )
 
 
 def consume_messages(channel: "BlockingChannel") -> None:
@@ -43,7 +55,7 @@ def consume_messages(channel: "BlockingChannel") -> None:
 
 
 def main():
-    configure_logging(level=logging.WARNING)
+    configure_logging(level=logging.INFO)
     with RabbitBase() as rabbit:
         consume_messages(channel=rabbit.channel)
 

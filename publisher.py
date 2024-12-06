@@ -38,7 +38,7 @@ def main():
         with connection.channel() as channel:
             log.info("Created channel: %s", channel)
             declare_queue(channel=channel)
-            for idx in range(1, 4):
+            for idx in range(1, 11):
                 produce_message(channel=channel, idx=idx)
                 time.sleep(0.5)
 
