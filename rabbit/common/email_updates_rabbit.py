@@ -68,7 +68,7 @@ class EmailUpdatesRabbitMixin:
         self.channel.basic_qos(prefetch_count=prefetch_count)  # обработка по одному сообщению
         q_name = self.declare_queue_for_email_updates(
             queue_name=queue_name,
-            exclusive=not queue_name,  # если имя не задано - очередь эксклюзивная
+            exclusive=not queue_name,  # если имя не задано - очередь эксклюзивная (+ параметр exclusive)
         )
         self.channel.basic_consume(
             queue=q_name,

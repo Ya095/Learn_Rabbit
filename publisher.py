@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 def declare_queue(channel: "BlockingChannel") -> None:
-    queue = channel.queue_declare(queue=MQ_exchange)
+    queue = channel.queue_declare(queue=MQ_routing_key)
     log.info("Declared queue %r %s", MQ_routing_key, queue)
 
 
@@ -38,7 +38,7 @@ def main():
         with connection.channel() as channel:
             log.info("Created channel: %s", channel)
             declare_queue(channel=channel)
-            for idx in range(1, 6):
+            for idx in range(1, 4):
                 produce_message(channel=channel, idx=idx)
                 time.sleep(0.5)
 
