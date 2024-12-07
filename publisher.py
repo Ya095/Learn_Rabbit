@@ -1,46 +1,37 @@
 import time
-from typing import TYPE_CHECKING
 import logging
 
 from config import (
-    get_connection,
     configure_logging,
     MQ_exchange,
     MQ_routing_key,
 )
+from rabbit.common import SimpleRabbit
 
-if TYPE_CHECKING:
-    from pika.adapters.blocking_connection import BlockingChannel
 
 log = logging.getLogger(__name__)
 
 
-def declare_queue(channel: "BlockingChannel") -> None:
-    queue = channel.queue_declare(queue=MQ_routing_key)
-    log.info("Declared queue %r %s", MQ_routing_key, queue)
+class Publisher(SimpleRabbit):
 
-
-def produce_message(channel: "BlockingChannel", idx: int) -> None:
-    message_body = f"New message #{idx:02d}"
-    log.info("Publish message %s", message_body)
-    channel.basic_publish(
-        exchange=MQ_exchange,
-        routing_key=MQ_routing_key,
-        body=message_body,
-    )
-    log.warning("Published message %s", message_body)
+    def produce_message(self, idx: int) -> None:
+        message_body = f"New message #{idx:02d}"
+        log.info("Publish message %s", message_body)
+        self.channel.basic_publish(
+            exchange=MQ_exchange,
+            routing_key=MQ_routing_key,
+            body=message_body,
+        )
+        log.warning("Published message %s", message_body)
 
 
 def main():
     configure_logging(level=logging.WARNING)
-    with get_connection() as connection:
-        log.info("Created connection: %s", connection)
-        with connection.channel() as channel:
-            log.info("Created channel: %s", channel)
-            declare_queue(channel=channel)
-            for idx in range(1, 11):
-                produce_message(channel=channel, idx=idx)
-                time.sleep(0.5)
+    with Publisher() as publisher:
+        publisher.declare_queue()
+        for idx in range(1, 11):
+            publisher.produce_message(idx=idx)
+            time.sleep(0.5)
 
 
 if __name__ == "__main__":

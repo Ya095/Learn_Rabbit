@@ -16,7 +16,6 @@ def process_new_msg(ch, method, properties, body):
     log.warning("[X] Updated user email: %s", body)
 
 
-
 def main():
     configure_logging(level=logging.WARNING)
     with EmailUpdatesRabbit() as rabbit:

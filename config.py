@@ -10,6 +10,10 @@ RMQ_PASS = "guest"
 MQ_exchange = ""
 MQ_routing_key = "news"
 
+# dead letter queue and exchange for news
+MQ_SIMPLE_DEAD_LETTER_KEY = "dlq-news"
+MQ_SIMPLE_DEAD_LETTER_EXCHANGE = "dlx-news"
+
 MQ_EMAIL_UPDATES_EXCHANGE_NAME = "email_updates"
 MQ_QUEUE_NAME_KYC_EMAIL_UPDATES = "kyc-email-updates"
 MQ_QUEUE_NAME_NEWSLETTER_EMAIL_UPDATES = "newsletter-email-updates"

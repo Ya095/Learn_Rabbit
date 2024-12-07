@@ -7,7 +7,7 @@ from config import (
     MQ_routing_key,
 )
 
-from rabbit.common import SimpleRabbit
+from rabbit import RabbitBase
 
 if TYPE_CHECKING:
     from pika.adapters.blocking_connection import BlockingChannel
@@ -56,8 +56,8 @@ def consume_messages(channel: "BlockingChannel") -> None:
 
 def main():
     configure_logging(level=logging.INFO)
-    with SimpleRabbit() as rabbit:
-        rabbit.consume_messages(message_callback=process_new_message)
+    with RabbitBase() as rabbit:
+        consume_messages(channel=rabbit.channel)
 
 
 if __name__ == "__main__":
